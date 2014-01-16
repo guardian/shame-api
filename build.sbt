@@ -13,7 +13,8 @@ libraryDependencies ++= Seq(
   "com.gu.openplatform" %% "content-api-client" % "2.0",
   "org.jsoup" % "jsoup" % "1.7.3",
   "org.specs2" %% "specs2" % "2.3.7" % "test",
-  "com.gu" %% "configuration" % "3.9"
+  "com.gu" %% "configuration" % "3.9",
+  "org.scalatest" % "scalatest_2.10" % "2.0" % "test"
 )
 
 play.Project.playScalaSettings
