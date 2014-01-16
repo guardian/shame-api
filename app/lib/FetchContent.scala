@@ -8,9 +8,9 @@ import play.api.libs.ws.WS
 import scala.concurrent.{ExecutionContext, Future}
 import ExecutionContext.Implicits.global
 import conf.ShameApiConfig
-import com.gu.openplatform.contentapi.model.Content
+import com.gu.openplatform.contentapi.model._
 
-case class Shame(webTitle:String, webUrl: String, standfirst: String, thumbnail: String)
+case class Shame(webTitle:String, webUrl: String, standfirst: String, image: String)
 
 
 object FetchContent {
@@ -44,8 +44,14 @@ object FetchContent {
   }
 
   private def createShame(c: Content): Shame = {
-    val element = c.elements.flatMap(_.headOption)
-    val imageUrl = element.flatMap(_.assets.head.file)
+    val element: Option[Element] = c.elements.flatMap(_.filter(_.relation=="main").headOption)
+    val asset: Option[Asset] = element.flatMap {
+      e =>
+      val x = e.assets.sortBy( a => a.typeData.get("width").map(_.toInt).getOrElse(0) )
+
+      x.headOption
+    }
+    val imageUrl = asset.flatMap(_.file)
 
     Shame(c.webTitle, c.webUrl, c.fields.get("standfirst"), imageUrl.get)
   }
