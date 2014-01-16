@@ -1,11 +1,17 @@
 package keywords
 
 import scala.annotation.tailrec
+import lib.SidebarElement
 
 trait KeywordExtractor {
 
   def apply(title: String, altText: String): List[String] = {
     val words = toWords(title) ::: toWords(altText)
+    extractNames(words)
+  }
+
+  def apply(sidebar: SidebarElement): List[String] = {
+    val words = toWords(sidebar.linkText) ::: toWords(sidebar.altText)
     extractNames(words)
   }
 

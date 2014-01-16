@@ -18,12 +18,13 @@ object FetchContent {
   def getShameWall : Future[List[Shame]] = {
     //get keywords -- todo
     val testKeywords = List("harry styles", "fifty shades of grey")
-    getContent(testKeywords)
+    getContent(Agent.keywordsFromDM.take(10))
 
   }
 
   def getContent(keywords: List[String]): Future[List[Shame]] = {
     val results = Future.sequence(keywords.map { keyword =>
+      println(keyword)
       ApiClient.tags.q(keyword).response flatMap { tagsResponse =>
         val tags = tagsResponse.results
         val content = if(tags.nonEmpty) {
@@ -54,8 +55,10 @@ object FetchContent {
 
 object ApiClient extends FutureAsyncApi {
 
+  apiKey = ShameApiConfig.apiKey
+
   override protected def fetch(url: String, parameters: scala.collection.immutable.Map[String, String]) =
-    super.fetch(url, parameters + ("api-key" -> ShameApiConfig.apiKey.getOrElse("")))
+    super.fetch(url, parameters + ("user-tier" -> "internal"))
 
 
   def GET(urlString: String, headers: Iterable[(String, String)] = Nil): Future[HttpResponse] =
