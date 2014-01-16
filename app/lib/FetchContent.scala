@@ -1,9 +1,11 @@
 package lib
 
 import com.gu.openplatform.contentapi.{FutureAsyncApi, Api}
+
 import com.gu.openplatform.contentapi.connection.HttpResponse
+
 import play.api.libs.ws.WS
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 case class Shame(webTitle:String, standfirst: String, thumbnail: String)
 
@@ -11,7 +13,7 @@ case class Shame(webTitle:String, standfirst: String, thumbnail: String)
 class FetchContent {
 
 
-  def getShameWall(keywords: List[String]): Future[List[Shame]] = {
+  def getShameWall(keywords: List[String])(implicit executionContext: ExecutionContext): Future[List[Shame]] = {
 
     val testKeywords = List("harry styles", "fifty shades of grey")
 
@@ -38,9 +40,8 @@ class FetchContent {
 }
 
 object ApiClient extends FutureAsyncApi {
-  import scala.concurrent.ExecutionContext.global
 
-  implicit val executionContext = global
+  implicit val executionContext = scala.concurrent.ExecutionContext.global
 
 
   override protected def fetch(url: String, parameters: scala.collection.immutable.Map[String, String]) =
