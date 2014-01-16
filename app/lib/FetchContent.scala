@@ -10,14 +10,12 @@ import ExecutionContext.Implicits.global
 import conf.ShameApiConfig
 import com.gu.openplatform.contentapi.model.Content
 
-case class Shame(webTitle:String, webUrl: String, standfirst: String, thumbnail: String)
+case class Shame(webTitle:String, webUrl: String, standfirst: Option[String], image: Option[String])
 
 
 object FetchContent {
 
   def getShameWall : Future[List[Shame]] = {
-    //get keywords -- todo
-    val testKeywords = List("harry styles", "fifty shades of grey")
     getContent(Agent.keywordsFromDM.take(10))
 
   }
@@ -48,7 +46,7 @@ object FetchContent {
     val element = c.elements.flatMap(_.headOption)
     val imageUrl = element.flatMap(_.assets.head.file)
 
-    Shame(c.webTitle, c.webUrl, c.fields.get("standfirst"), imageUrl.get)
+    Shame(c.webTitle, c.webUrl, c.fields.flatMap(_.get("standfirst")), imageUrl)
   }
 
 }
@@ -56,9 +54,10 @@ object FetchContent {
 object ApiClient extends FutureAsyncApi {
 
   apiKey = ShameApiConfig.apiKey
+  override val targetUrl = ShameApiConfig.targetUrl.getOrElse("http://content.guardianapis.com")
 
   override protected def fetch(url: String, parameters: scala.collection.immutable.Map[String, String]) =
-    super.fetch(url, parameters + ("user-tier" -> "internal"))
+    super.fetch(url, parameters + ("user-tier" -> ShameApiConfig.userTier.getOrElse("free")))
 
 
   def GET(urlString: String, headers: Iterable[(String, String)] = Nil): Future[HttpResponse] =
