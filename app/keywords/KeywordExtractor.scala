@@ -14,11 +14,12 @@ trait KeywordExtractor {
     def chunkNames(chunk: List[String], words: List[String], names: List[List[String]]): List[List[String]] = words match {
       case Nil => names
 
-      case head :: tail if head.head.isUpper =>
+      case head :: tail if head.headOption exists {_.isUpper} =>
         chunkNames(chunk :+ head, tail, names)
 
       case head :: tail =>
-        chunkNames(Nil, tail, chunk :: names)
+        val newNames = if(chunk.isEmpty) names else chunk :: names
+        chunkNames(Nil, tail, newNames)
     }
 
     chunkNames(Nil, words, Nil).sortBy(_.size) map {
