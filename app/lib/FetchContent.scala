@@ -7,6 +7,7 @@ import com.gu.openplatform.contentapi.connection.HttpResponse
 import play.api.libs.ws.WS
 import scala.concurrent.{ExecutionContext, Future}
 import ExecutionContext.Implicits.global
+import conf.ShameApiConfig
 
 case class Shame(webTitle:String, webUrl: String, standfirst: String, thumbnail: String)
 
@@ -25,7 +26,7 @@ object FetchContent {
       ApiClient.tags.q(keyword).response flatMap { tagsResponse =>
         val tags = tagsResponse.results
         val content = if(tags.nonEmpty) {
-          ApiClient.item.itemId(tags(0).id).showElements("image").showFields("standfirst,thumbnail").response map { itemResponse =>
+          ApiClient.item.itemId(tags(0).id).showElements("image").showFields("all").response map { itemResponse =>
             itemResponse.results.headOption.map(r =>
               Shame(r.webTitle, r.webUrl, r.fields.get("standfirst"), r.fields.get("thumbnail")))
           }
@@ -48,7 +49,7 @@ object FetchContent {
 object ApiClient extends FutureAsyncApi {
 
   override protected def fetch(url: String, parameters: scala.collection.immutable.Map[String, String]) =
-    super.fetch(url, parameters + ("api-key" -> "jenny"))
+    super.fetch(url, parameters + ("api-key" -> ShameApiConfig.apiKey.getOrElse("")))
 
 
   def GET(urlString: String, headers: Iterable[(String, String)] = Nil): Future[HttpResponse] =
