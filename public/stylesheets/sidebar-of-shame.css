@@ -1,0 +1,44 @@
+.right-most-popular__title {
+    color:#fff;
+    background-color:#C562A5!important;
+    padding-left:5px;
+}
+.right-most-popular {
+    width:320px;
+}
+.media__img {
+    float:right!important;
+    margin-left:15px;
+    margin-right:0!important;
+    padding-top:0!important
+}
+.right-most-popular-item__img {
+    width:154px!important;
+    height:115px!important;
+    overflow:hidden;
+}
+.right-most-popular-item__img img {
+    height:115px;
+    width:auto!important;
+    margin-left:-15px;
+}
+.right-most-popular-item {
+    height: 115px!important;
+    padding-left:5px;
+    padding-top:0!important;
+    margin-bottom:10px!important;
+}
+.right-most-popular-item__url .right-most-popular-item__headline {
+    color:#214583!important;
+    margin-top:3px;
+}
+.right-most-popular-item__url:hover .right-most-popular-item__headline {
+    color:#fff!important
+}
+.right-most-popular-item__url:hover {
+    text-decoration:none!important;
+}
+
+.right-most-popular-item:hover {
+    background-color:#C562A5!important;
+}
