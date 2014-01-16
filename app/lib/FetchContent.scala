@@ -8,6 +8,7 @@ import play.api.libs.ws.WS
 import scala.concurrent.{ExecutionContext, Future}
 import ExecutionContext.Implicits.global
 import conf.ShameApiConfig
+import com.gu.openplatform.contentapi.model.Content
 
 case class Shame(webTitle:String, webUrl: String, standfirst: String, thumbnail: String)
 
@@ -16,7 +17,7 @@ object FetchContent {
 
   def getShameWall : Future[List[Shame]] = {
     //get keywords -- todo
-    val testKeywords = List("harry styles")
+    val testKeywords = List("harry styles", "fifty shades of grey")
     getContent(testKeywords)
 
   }
@@ -27,14 +28,12 @@ object FetchContent {
         val tags = tagsResponse.results
         val content = if(tags.nonEmpty) {
           ApiClient.item.itemId(tags(0).id).showElements("image").showFields("all").response map { itemResponse =>
-            itemResponse.results.headOption.map(r =>
-              Shame(r.webTitle, r.webUrl, r.fields.get("standfirst"), r.fields.get("thumbnail")))
+            itemResponse.results.headOption.map(createShame)
           }
         }
         else {
           ApiClient.search.q(keyword).showElements("image").showFields("all").response map { searchResponse =>
-            searchResponse.results.headOption.map(r =>
-              Shame(r.webTitle, r.webUrl, r.fields.get("standfirst"), r.fields.get("thumbnail")))
+            searchResponse.results.headOption.map(createShame)
           }
         }
         content
@@ -42,6 +41,13 @@ object FetchContent {
       }
     })
     results map { _.flatten }
+  }
+
+  private def createShame(c: Content): Shame = {
+    val element = c.elements.flatMap(_.headOption)
+    val imageUrl = element.flatMap(_.assets.head.file)
+
+    Shame(c.webTitle, c.webUrl, c.fields.get("standfirst"), imageUrl.get)
   }
 
 }
