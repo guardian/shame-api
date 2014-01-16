@@ -1,10 +1,9 @@
 package lib
 
 import org.specs2.Specification
-import org.specs2.specification.Fragments
 
 class HateScraperSpec extends Specification with ResourceLoading {
-  val elements = HateScraper.extract(getTextFile("index.html").get)
+  val elements = HateScraper.extract(getTextFile("index.html", "iso-8859-1").get)
 
   def is = "extracts first element correctly" ! {
     elements.head mustEqual SidebarElement(
