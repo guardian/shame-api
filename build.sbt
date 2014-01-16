@@ -10,7 +10,7 @@ libraryDependencies ++= Seq(
   jdbc,
   anorm,
   cache,
-  "com.gu" %% "management-play" % "5.26" exclude("javassist", "javassist"),
+  "com.gu" %% "management-play" % "5.26" exclude("javassist", "javassist") exclude("org.scala-stm", "scala-stm_2.10.0"),
   "com.gu.openplatform" %% "content-api-client" % "2.0",
   "org.jsoup" % "jsoup" % "1.7.3"
 )
