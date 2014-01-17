@@ -1,7 +1,7 @@
 require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
 
     var config = {
-            appRoot: "http://shameapi-loadbalan-10x2o2lwq6if0-1895628025.eu-west-1.elb.amazonaws.com/"
+            appRoot: "http://shameapi-loadbalan-10x2o2lwq6if0-1895628025.eu-west-1.elb.amazonaws.com"
         },
         selectors = {
             list: '.right-most-popular__items',
