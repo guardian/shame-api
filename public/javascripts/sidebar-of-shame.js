@@ -16,7 +16,7 @@ require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
         state = 0,
         events = {
             keypress: function(e) {
-                if (115 === e.charCode) {
+                if (115 === e.charCode) {  // listen for 's'
                     action(state);
                     state++;
                 }
@@ -37,7 +37,7 @@ require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
                 };
             els.list.append(template(shameItemTemplate, replacements));
         },
-        addStyles= function() {
+        includeStyles= function() {
             var styles = document.createElement('link');
             styles.setAttribute('href','http://localhost:9000/assets/stylesheets/sidebar-of-shame.css');
             styles.setAttribute('type','text/css');
@@ -45,9 +45,6 @@ require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
             document.head.appendChild(styles);
         },
         makeShameful = function(shame) {
-            els.list.empty();
-            els.heading.innerText = "DON'T MISS";
-            addStyles();
             for (var i=0,l=shame.length; i<l; i++) {
                 addShame(shame[i]);
             }
@@ -57,22 +54,31 @@ require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
         },
         start = function() {
             if (pageIsEligible()) {
+                els.list.empty();
+                includeStyles();
+                var updating = bonzo(bonzo.create("<li><div class='is-updating'>Loading...</div></li>"));
+                updating.appendTo(els.list);
                 ajax({
                     url: "http://localhost:9000/",
                     type: "jsonp",
                     crossOrigin: true
                 }).then(
                     function(response) {
+                        updating.remove();
                         makeShameful(response);
                     }
                 );
             }
         },
         action = function(currentState){
+            var body = bonzo(document.body);
             if (0 === currentState) {
                 start();
             } if (1 === currentState) {
-                bonzo(document.body).addClass("shameful");
+                els.heading.text("DON'T MISS");
+                body.addClass("shameful");
+            } if (2 === currentState) {
+                body.addClass("very-shameful");
             }
         };
 
