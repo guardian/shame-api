@@ -16,7 +16,7 @@ case class Shame(id: String, webTitle:String, webUrl: String, standfirst: String
 object FetchContent {
 
   def getShameWall : Future[List[Shame]] = {
-    getContent(Agent.keywordsFromDM.take(30))
+    getContent(Agent.keywordsFromDM.take(100))
 
   }
 
