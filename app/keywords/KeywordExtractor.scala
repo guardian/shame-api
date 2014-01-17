@@ -45,9 +45,10 @@ trait KeywordExtractor {
     words.toList
   }
 
-  protected lazy val stopWords = Set("a", "the", "i", "you", "he", "s§he", "it", "we", "they",
+  protected lazy val stopWords = Set("a", "the", "i", "you", "he", "she", "it", "we", "they",
     "my", "your", "his", "her", "its", "our", "their", "what", "when", "why", "who", "how", "if",
-    "in", "on"
+    "in", "on", "claims", "same", "friday", "very", "too", "big", "own", "north", "still", "released",
+    "have", "april", "lived", "tube", "blue", "let", "made"
   )
   protected def isWordOk(word: String): Boolean = !(stopWords contains word.toLowerCase)
 }
