@@ -1,7 +1,8 @@
 require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
 
     var selectors = {
-            list: '.right-most-popular__items'
+            list: '.right-most-popular__items',
+            heading: '.right-most-popular__title'
         },
         els = function(){
             var tmp = {};
@@ -12,6 +13,15 @@ require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
             }
             return tmp;
         }(),
+        state = 0,
+        events = {
+            keypress: function(e) {
+                if (115 === e.charCode) {  // listen for 's'
+                    action(state);
+                    state++;
+                }
+            }
+        },
         template = function(format, replacements) {
             return format.replace(/\{(.+?)\}/g, function(_, key){
                 return replacements[key];
@@ -23,11 +33,11 @@ require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
                     url: shame.webUrl,
                     title: shame.webTitle,
                     alt: shame.webTitle,
-                    thumbnail: shame.thumbnail
+                    thumbnail: shame.image
                 };
             els.list.append(template(shameItemTemplate, replacements));
         },
-        addStyles= function() {
+        includeStyles= function() {
             var styles = document.createElement('link');
             styles.setAttribute('href','http://localhost:9000/assets/stylesheets/sidebar-of-shame.css');
             styles.setAttribute('type','text/css');
@@ -35,20 +45,42 @@ require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
             document.head.appendChild(styles);
         },
         makeShameful = function(shame) {
-            els.list.empty();
-            addStyles();
             for (var i=0,l=shame.length; i<l; i++) {
                 addShame(shame[i]);
             }
+        },
+        pageIsEligible = function() {
+            return "Article" == guardian.config.page.contentType;
+        },
+        start = function() {
+            if (pageIsEligible()) {
+                els.list.empty();
+                includeStyles();
+                var updating = bonzo(bonzo.create("<li><div class='is-updating'>Loading...</div></li>"));
+                updating.appendTo(els.list);
+                ajax({
+                    url: "http://localhost:9000/",
+                    type: "jsonp",
+                    crossOrigin: true
+                }).then(
+                    function(response) {
+                        updating.remove();
+                        makeShameful(response);
+                    }
+                );
+            }
+        },
+        action = function(currentState){
+            var body = bonzo(document.body);
+            if (0 === currentState) {
+                start();
+            } if (1 === currentState) {
+                els.heading.text("DON'T MISS");
+                body.addClass("shameful");
+            } if (2 === currentState) {
+                body.addClass("very-shameful");
+            }
         };
 
-    ajax({
-        url: "http://localhost:9000/",
-        type: "jsonp",
-        crossOrigin: true
-    }).then(
-        function(response) {
-            makeShameful(response);
-        }
-    );
+    document.addEventListener("keypress", events.keypress, false);
 });
