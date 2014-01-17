@@ -10,7 +10,7 @@ import ExecutionContext.Implicits.global
 import conf.ShameApiConfig
 import com.gu.openplatform.contentapi.model.Content
 
-case class Shame(webTitle:String, webUrl: String, standfirst: Option[String], image: Option[String])
+case class Shame(webTitle:String, webUrl: String, standfirst: String, image: String)
 
 
 object FetchContent {
@@ -45,8 +45,9 @@ object FetchContent {
   private def createShame(c: Content): Shame = {
     val element = c.elements.flatMap(_.headOption)
     val imageUrl = element.flatMap(_.assets.head.file)
+    val fields = c.fields.get
 
-    Shame(c.webTitle, c.webUrl, c.fields.flatMap(_.get("standfirst")), imageUrl)
+    Shame(c.webTitle, c.webUrl, c.fields.get.getOrElse("standfirst", "filter me!"), imageUrl.getOrElse("filter me!"))
   }
 
 }
