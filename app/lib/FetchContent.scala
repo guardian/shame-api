@@ -10,13 +10,13 @@ import ExecutionContext.Implicits.global
 import conf.ShameApiConfig
 import com.gu.openplatform.contentapi.model.Content
 
-case class Shame(webTitle:String, webUrl: String, standfirst: String, image: String)
+case class Shame(id: String, webTitle:String, webUrl: String, standfirst: String, image: String)
 
 
 object FetchContent {
 
   def getShameWall : Future[List[Shame]] = {
-    getContent(Agent.keywordsFromDM.take(10))
+    getContent(Agent.keywordsFromDM.take(30))
 
   }
 
@@ -38,15 +38,13 @@ object FetchContent {
 
       }
     })
-    results map { _.flatten }
+    results map { _.flatten.distinct }
   }
 
   private def createShame(c: Content): Shame = {
     val element = c.elements.flatMap(_.headOption)
     val imageUrl = element.flatMap(_.assets.head.file)
-    val fields = c.fields.get
-
-    Shame(c.webTitle, c.webUrl, c.fields.get.getOrElse("standfirst", "filter me!"), imageUrl.getOrElse("filter me!"))
+    Shame(c.id, c.webTitle, c.webUrl, c.fields.get.getOrElse("standfirst", "filter me!"), imageUrl.getOrElse("filter me!"))
   }
 
 }
