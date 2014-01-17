@@ -23,5 +23,19 @@ class KeywordExtractorTest extends FlatSpec with ShouldMatchers{
     keywords.size should be(4)
   }
 
+  it should "not include stop words in extracted text" in {
+    val keywords = extract("'What are you saying about my girl's mom?' Shia LaBeouf headbutts drinker in London bar brawl as girlfriend screams to stop.", "")
+
+    keywords should contain("Shia LaBeouf")
+    keywords should contain("London")
+    keywords should not contain("What")
+  }
+
+  it should "order results by frequency" in {
+    val keywords = extract("Matilda likes Bob", "but Bob doesn't care. He likes Joe but Joe doesn't like Bob.")
+
+    keywords should be(List("Bob", "Joe", "Matilda"))
+  }
+
 
 }
