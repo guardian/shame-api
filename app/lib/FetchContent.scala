@@ -22,7 +22,6 @@ object FetchContent {
 
   def getContent(keywords: List[String]): Future[List[Shame]] = {
     val results = Future.sequence(keywords.map { keyword =>
-      println(keyword)
       ApiClient.tags.q(keyword).response flatMap { tagsResponse =>
         val tags = tagsResponse.results
         val content = if(tags.nonEmpty) {
