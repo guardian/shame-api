@@ -10,7 +10,7 @@ import ExecutionContext.Implicits.global
 import conf.ShameApiConfig
 import com.gu.openplatform.contentapi.model.Content
 
-case class Shame(id: String, webTitle:String, webUrl: String, standfirst: String, image: String)
+case class Shame(id: String, webTitle:String, webUrl: String, standfirst: String, image: String, dmKeyword: String)
 
 
 object FetchContent {
@@ -26,12 +26,12 @@ object FetchContent {
         val tags = tagsResponse.results
         val content = if(tags.nonEmpty) {
           ApiClient.item.itemId(tags(0).id).showElements("image").showFields("all").response map { itemResponse =>
-            itemResponse.results.headOption.map(createShame)
+            itemResponse.results.headOption.flatMap(createShame(_, keyword))
           }
         }
         else {
           ApiClient.search.q(keyword).showElements("image").showFields("all").response map { searchResponse =>
-            searchResponse.results.headOption.map(createShame)
+            searchResponse.results.headOption.flatMap(createShame(_, keyword))
           }
         }
         content
@@ -41,10 +41,11 @@ object FetchContent {
     results map { _.flatten.distinct }
   }
 
-  private def createShame(c: Content): Shame = {
-    val element = c.elements.flatMap(_.headOption)
-    val imageUrl = element.flatMap(_.assets.head.file)
-    Shame(c.id, c.webTitle, c.webUrl, c.fields.get.getOrElse("standfirst", "filter me!"), imageUrl.getOrElse("filter me!"))
+  private def createShame(c: Content, keyword: String): Option[Shame] = {
+    for {
+      standfirst <- c.safeFields.get("standfirst")
+      imageUrl <- c.elements.flatMap(_.headOption).flatMap(_.assets.head.file)
+    } yield Shame(c.id, c.webTitle, c.webUrl, standfirst, imageUrl, keyword)
   }
 
 }
