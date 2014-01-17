@@ -11,7 +11,6 @@ import ExecutionContext.Implicits.global
 
 class Global extends GlobalSettings {
 
-
   override def onStart(app: Application) {
     val keywordExtract = new KeywordExtractor {}
     Akka.system.scheduler.schedule(0 seconds, 30 seconds) {
