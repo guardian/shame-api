@@ -1,5 +1,5 @@
 import keywords.KeywordExtractor
-import lib.{Agent, HateScraper}
+import lib.{FetchContent, Agent, HateScraper}
 import management.ShameApiManagementServer
 import play._
 import play.api.libs.concurrent.Akka
@@ -17,6 +17,11 @@ class Global extends GlobalSettings {
       val futureKeywords = HateScraper.scrape.map(_.map(keywordExtract.apply).flatten)
       futureKeywords.map( x => Agent.keywordsFromDM = x)
     }
+
+    Akka.system.scheduler.schedule(5 seconds, 30 seconds) {
+      FetchContent.getShameWall map { Agent.shameWall = _ }
+    }
+
     ShameApiManagementServer.start()
   }
 
