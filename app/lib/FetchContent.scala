@@ -42,9 +42,11 @@ object FetchContent {
   }
 
   private def createShame(c: Content, keyword: String): Option[Shame] = {
+    val element = c.elements.flatMap(_.find(_.relation == "main"))
+    val asset = element.flatMap (_.assets.sortBy( a => a.typeData.get("width").map(_.toInt).getOrElse(0) ).headOption)
     for {
       standfirst <- c.safeFields.get("standfirst")
-      imageUrl <- c.elements.flatMap(_.headOption).flatMap(_.assets.head.file)
+      imageUrl <- asset.flatMap(_.file)
     } yield Shame(c.id, c.webTitle, c.webUrl, standfirst, imageUrl, keyword)
   }
 
