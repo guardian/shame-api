@@ -15,6 +15,8 @@ case class Shame(id: String, webTitle:String, webUrl: String, standfirst: String
 
 object FetchContent {
 
+  lazy val sectionStr = "lifeandstyle|commentisfree"
+
   def getShameWall : Future[List[Shame]] = {
     getContent(Agent.keywordsFromDM.take(100))
 
@@ -22,7 +24,10 @@ object FetchContent {
 
   def getContent(keywords: List[String]): Future[List[Shame]] = {
     val results = Future.sequence(keywords.map { keyword =>
-      ApiClient.tags.q(keyword).response flatMap { tagsResponse =>
+      ApiClient.tags
+        .section(sectionStr)
+        .q(keyword)
+        .response flatMap { tagsResponse =>
         val tags = tagsResponse.results
         val content = if(tags.nonEmpty) {
           ApiClient.item.itemId(tags(0).id).showElements("image").showFields("all").response map { itemResponse =>
@@ -30,7 +35,12 @@ object FetchContent {
           }
         }
         else {
-          ApiClient.search.q(keyword).showElements("image").showFields("all").response map { searchResponse =>
+          ApiClient.search
+            .section(sectionStr)
+            .q(keyword)
+            .showElements("image")
+            .showFields("all")
+            .response map { searchResponse =>
             searchResponse.results.headOption.flatMap(createShame(_, keyword))
           }
         }
