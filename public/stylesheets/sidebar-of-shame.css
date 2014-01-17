@@ -23,15 +23,20 @@
     margin-left:-15px;
 }
 .shameful .right-most-popular-item {
-    height: 115px!important;
+    height: auto;
+    min-height: 115px;
     padding-left:5px;
     padding-top:0!important;
-    margin-bottom:10px!important;
+    margin-bottom:5px!important;
     background-color:#e3e3e3!important;
 }
 .shameful .right-most-popular-item__url .right-most-popular-item__headline {
     color:#214583!important;
     margin-top:3px;
+    font-size: 1.3rem;
+    max-height: 15rem;
+    font-weight: bold;
+    -webkit-line-clamp: 7;
 }
 .shameful .right-most-popular-item__url:hover .right-most-popular-item__headline {
     color:#fff!important
@@ -39,7 +44,27 @@
 .shameful .right-most-popular-item__url:hover {
     text-decoration:none!important;
 }
-
 .shameful .right-most-popular-item:hover {
     background-color:#C562A5!important;
+}
+
+.very-shameful #header, .very-shameful .parts__head {
+    display: none;
+}
+.very-shameful #mail-header {
+    text-align: center;
+}
+.very-shameful #preloads {
+    margin-top: 28px;
+}
+.very-shameful #header.has-nav + #preloads {
+    margin-top: 0px;
+}
+.very-shameful .article__header {
+    font-weight: bolder;
+    color: #333;
+}
+.very-shameful .article__standfirst {
+    font-weight: bold;
+    color: #333;
 }
