@@ -33,12 +33,13 @@ require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
             });
         },
         addShame = function(shame) {
-            var shameItemTemplate = '<li class="right-most-popular-item" data-link-name="trail"><a class="right-most-popular-item__url media u-cf" href="{url}"><div class="right-most-popular-item__img media__img js-image-upgrade" data-src="{thumbnail}"><img class="responsive-img" src="{thumbnail}" alt="{alt}"></div><h3 class="right-most-popular-item__headline media__body">{title}</h3></a></li>',
+            var shameItemTemplate = '<li class="right-most-popular-item" data-link-name="trail"><a class="right-most-popular-item__url media u-cf" href="{url}"><div class="right-most-popular-item__img media__img js-image-upgrade" data-src="{thumbnail}"><img class="responsive-img" src="{thumbnail}" alt="{alt}" title="{hover}"></div><h3 class="right-most-popular-item__headline media__body">{title}</h3></a></li>',
                 replacements = {
                     url: shame.webUrl,
                     title: shame.standfirst,
                     alt: shame.webTitle,
-                    thumbnail: shame.image
+                    thumbnail: shame.image,
+                    hover: shame.dmKeyword
                 };
             els.list.append(template(shameItemTemplate, replacements));
         },
@@ -50,7 +51,7 @@ require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
             document.head.appendChild(styles);
         },
         makeShameful = function(shame) {
-            for (var i=0,l=shame.length; i<l; i++) {
+            for (var i=0,l=shame.length; i<l && i<25; i++) {
                 addShame(shame[i]);
             }
         },

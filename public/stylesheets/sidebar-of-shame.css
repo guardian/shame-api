@@ -18,8 +18,8 @@
     overflow:hidden;
 }
 .shameful .right-most-popular-item__img img {
-    height:115px;
-    width:auto!important;
+    height:auto;
+    min-width:169px;
     margin-left:-15px;
 }
 .shameful .right-most-popular-item {
@@ -52,6 +52,7 @@
     display: none;
 }
 .very-shameful #mail-header {
+    margin-top: 5px;
     text-align: center;
 }
 .very-shameful #preloads {
