@@ -38,7 +38,11 @@ object FetchContent {
 
       }
     })
-    results map { _.flatten.distinct }
+    results map { _.flatten.distinctBy(_.id).toList }
+  }
+
+  implicit class RichSeq[A](seq: Seq[A]) {
+    def distinctBy[B](f: A => B) = seq.groupBy(f).values.toSeq.map(_.head)
   }
 
   private def createShame(c: Content, keyword: String): Option[Shame] = {
