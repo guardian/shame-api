@@ -16,6 +16,12 @@ trait KeywordExtractor {
   }
 
   protected def extractNames(words: List[String]): List[String] = {
+    val names = findNames(words) filter isWordOk
+    val counts: Map[String, Int] = names groupBy identity map {case (k, l) => k -> l.size }
+    (names.distinct sortBy counts).reverse
+  }
+
+  protected def findNames(words: List[String]): List[String] = {
     @tailrec
     def chunkNames(chunk: List[String], words: List[String], names: List[List[String]]): List[List[String]] = words match {
       case Nil => names
@@ -39,4 +45,9 @@ trait KeywordExtractor {
     words.toList
   }
 
+  protected lazy val stopWords = Set("a", "the", "i", "you", "he", "s§he", "it", "we", "they",
+    "my", "your", "his", "her", "its", "our", "their", "what", "when", "why", "who", "how", "if",
+    "in", "on"
+  )
+  protected def isWordOk(word: String): Boolean = !(stopWords contains word.toLowerCase)
 }
