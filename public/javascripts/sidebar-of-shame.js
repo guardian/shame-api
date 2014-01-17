@@ -1,8 +1,12 @@
 require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
 
-    var selectors = {
+    var config = {
+            appRoot: "http://localhost:9000"
+        },
+        selectors = {
             list: '.right-most-popular__items',
-            heading: '.right-most-popular__title'
+            heading: '.right-most-popular__title',
+            pageHeader: '#header'
         },
         els = function(){
             var tmp = {};
@@ -11,6 +15,7 @@ require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
                     tmp[key] = bonzo($(selectors[key]));
                 }
             }
+            tmp.body = bonzo(document.body);
             return tmp;
         }(),
         state = 0,
@@ -31,7 +36,7 @@ require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
             var shameItemTemplate = '<li class="right-most-popular-item" data-link-name="trail"><a class="right-most-popular-item__url media u-cf" href="{url}"><div class="right-most-popular-item__img media__img js-image-upgrade" data-src="{thumbnail}"><img class="responsive-img" src="{thumbnail}" alt="{alt}"></div><h3 class="right-most-popular-item__headline media__body">{title}</h3></a></li>',
                 replacements = {
                     url: shame.webUrl,
-                    title: shame.webTitle,
+                    title: shame.standfirst,
                     alt: shame.webTitle,
                     thumbnail: shame.image
                 };
@@ -39,7 +44,7 @@ require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
         },
         includeStyles= function() {
             var styles = document.createElement('link');
-            styles.setAttribute('href','http://localhost:9000/assets/stylesheets/sidebar-of-shame.css');
+            styles.setAttribute('href', config.appRoot + '/assets/stylesheets/sidebar-of-shame.css');
             styles.setAttribute('type','text/css');
             styles.setAttribute('rel','stylesheet');
             document.head.appendChild(styles);
@@ -59,7 +64,7 @@ require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
                 var updating = bonzo(bonzo.create("<li><div class='is-updating'>Loading...</div></li>"));
                 updating.appendTo(els.list);
                 ajax({
-                    url: "http://localhost:9000/",
+                    url: config.appRoot + "/",
                     type: "jsonp",
                     crossOrigin: true
                 }).then(
@@ -70,15 +75,22 @@ require(['bonzo', 'common/$', 'common/utils/ajax'], function(bonzo, $, ajax){
                 );
             }
         },
-        action = function(currentState){
-            var body = bonzo(document.body);
+        mailifyRHCol = function() {
+            els.heading.text("DON'T MISS");
+            els.body.addClass("shameful");
+        },
+        mailify = function() {
+            var headerTemplate = "<div id='mail-header'><img src='{root}/assets/images/articleMockHeader.png' /></div>";
+            els.body.addClass("very-shameful");
+            bonzo(bonzo.create(template(headerTemplate, {root: config.appRoot}))).insertBefore(els.pageHeader);
+        },
+        action = function(currentState) {
             if (0 === currentState) {
                 start();
             } if (1 === currentState) {
-                els.heading.text("DON'T MISS");
-                body.addClass("shameful");
+                mailifyRHCol();
             } if (2 === currentState) {
-                body.addClass("very-shameful");
+                mailify();
             }
         };
 
