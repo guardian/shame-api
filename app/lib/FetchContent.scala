@@ -16,7 +16,7 @@ case class Shame(id: String, webTitle:String, webUrl: String, standfirst: String
 object FetchContent {
 
   def getShameWall : Future[List[Shame]] = {
-    getContent(Agent.keywordsFromDM.take(30))
+    getContent(Agent.keywordsFromDM.take(100))
 
   }
 
@@ -38,7 +38,11 @@ object FetchContent {
 
       }
     })
-    results map { _.flatten.distinct }
+    results map { _.flatten.distinctBy(_.id).toList }
+  }
+
+  implicit class RichSeq[A](seq: Seq[A]) {
+    def distinctBy[B](f: A => B) = seq.groupBy(f).values.toSeq.map(_.head)
   }
 
   private def createShame(c: Content, keyword: String): Option[Shame] = {
